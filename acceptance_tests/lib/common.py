@@ -27,13 +27,13 @@ STORAGE_ORACLE_COMPARTMENTID = os.getenv('TEST_STORAGE_ORACLE_COMPARTMENTID')
 STORAGE_BAIDU_BUCKET = os.getenv('TEST_STORAGE_BAIDU_BUCKET')
 STORAGE_BAIDU_ENDPOINT = os.getenv('TEST_STORAGE_BAIDU_ENDPOINT')
 
-STORAGE_AMAZON_PREFIX = 'acceptance/%s' % NOW
-STORAGE_GOOGLE_PREFIX = 'acceptance/%s' % NOW
-STORAGE_MICROSOFT_PREFIX = 'acceptance/%s' % NOW
-STORAGE_ALIBABA_PREFIX = 'acceptance/%s' % NOW
-STORAGE_OPENSTACK_PREFIX = 'acceptance/%s' % NOW
-STORAGE_ORACLE_PREFIX = 'acceptance/%s' % NOW
-STORAGE_BAIDU_PREFIX = 'acceptance/%s' % NOW
+STORAGE_AMAZON_PREFIX = f'acceptance/{NOW}'
+STORAGE_GOOGLE_PREFIX = f'acceptance/{NOW}'
+STORAGE_MICROSOFT_PREFIX = f'acceptance/{NOW}'
+STORAGE_ALIBABA_PREFIX = f'acceptance/{NOW}'
+STORAGE_OPENSTACK_PREFIX = f'acceptance/{NOW}'
+STORAGE_ORACLE_PREFIX = f'acceptance/{NOW}'
+STORAGE_BAIDU_PREFIX = f'acceptance/{NOW}'
 
 class CommandRunner(object):
     def __init__(self):

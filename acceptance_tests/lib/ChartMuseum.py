@@ -12,8 +12,9 @@ import common
 class ChartMuseum(common.CommandRunner):
     def http_status_code_should_be(self, expected_status, actual_status):
         if int(expected_status) != int(actual_status):
-            raise AssertionError('Expected HTTP status code to be %s but was %s.'
-                                 % (expected_status, actual_status))
+            raise AssertionError(
+                f'Expected HTTP status code to be {expected_status} but was {actual_status}.'
+            )
 
     def start_chartmuseum(self, storage):
         self.stop_chartmuseum()
@@ -21,28 +22,28 @@ class ChartMuseum(common.CommandRunner):
         cmd = 'KILLME=1 chartmuseum --debug --enforce-semver2 --port=%d --storage="%s" ' % (common.PORT, storage)
         if storage == 'local':
             shutil.rmtree(common.STORAGE_DIR, ignore_errors=True)
-            cmd += '--storage-local-rootdir=%s >> %s 2>&1' % (common.STORAGE_DIR, common.LOGFILE)
+            cmd += f'--storage-local-rootdir={common.STORAGE_DIR} >> {common.LOGFILE} 2>&1'
         elif storage == 'amazon':
             cmd += '--storage-amazon-bucket="%s" --storage-amazon-prefix="%s" --storage-amazon-region="%s" >> %s 2>&1' \
-                  % (common.STORAGE_AMAZON_BUCKET, common.STORAGE_AMAZON_PREFIX, common.STORAGE_AMAZON_REGION, common.LOGFILE)
+                      % (common.STORAGE_AMAZON_BUCKET, common.STORAGE_AMAZON_PREFIX, common.STORAGE_AMAZON_REGION, common.LOGFILE)
         elif storage == 'google':
             cmd += '--storage-google-bucket="%s" --storage-google-prefix="%s" >> %s 2>&1' \
-                   % (common.STORAGE_GOOGLE_BUCKET, common.STORAGE_GOOGLE_PREFIX, common.LOGFILE)
+                       % (common.STORAGE_GOOGLE_BUCKET, common.STORAGE_GOOGLE_PREFIX, common.LOGFILE)
         elif storage == 'microsoft':
             cmd += '--storage-microsoft-container="%s" --storage-microsoft-prefix="%s"  >> %s 2>&1' \
-                   % (common.STORAGE_MICROSOFT_CONTAINER, common.STORAGE_MICROSOFT_PREFIX, common.LOGFILE)
+                       % (common.STORAGE_MICROSOFT_CONTAINER, common.STORAGE_MICROSOFT_PREFIX, common.LOGFILE)
         elif storage == 'alibaba':
             cmd += '--storage-alibaba-bucket="%s" --storage-alibaba-prefix="%s" --storage-alibaba-endpoint="%s" >> %s 2>&1' \
-                  % (common.STORAGE_ALIBABA_BUCKET, common.STORAGE_ALIBABA_PREFIX, common.STORAGE_ALIBABA_ENDPOINT, common.LOGFILE)
+                      % (common.STORAGE_ALIBABA_BUCKET, common.STORAGE_ALIBABA_PREFIX, common.STORAGE_ALIBABA_ENDPOINT, common.LOGFILE)
         elif storage == 'openstack':
             cmd += '--storage-openstack-container="%s" --storage-openstack-prefix="%s" --storage-openstack-region="%s" >> %s 2>&1' \
-                  % (common.STORAGE_OPENSTACK_CONTAINER, common.STORAGE_OPENSTACK_PREFIX, common.STORAGE_OPENSTACK_REGION, common.LOGFILE)
+                      % (common.STORAGE_OPENSTACK_CONTAINER, common.STORAGE_OPENSTACK_PREFIX, common.STORAGE_OPENSTACK_REGION, common.LOGFILE)
         elif storage == 'oracle':
             cmd += '--storage-oracle-bucket="%s" --storage-oracle-prefix="%s" --storage-oracle-compartmentid="%s" >> %s 2>&1' \
-                   % (common.STORAGE_ORACLE_BUCKET, common.STORAGE_ORACLE_PREFIX, common.STORAGE_ORACLE_COMPARTMENTID, common.LOGFILE)
+                       % (common.STORAGE_ORACLE_BUCKET, common.STORAGE_ORACLE_PREFIX, common.STORAGE_ORACLE_COMPARTMENTID, common.LOGFILE)
         elif storage == 'baidu':
             cmd += '--storage-baidu-bucket="%s" --storage-baidu-prefix="%s" --storage-baidu-endpoint="%s" >> %s 2>&1' \
-                   % (common.STORAGE_BAIDU_BUCKET, common.STORAGE_BAIDU_PREFIX, common.STORAGE_BAIDU_ENDPOINT, common.LOGFILE)
+                       % (common.STORAGE_BAIDU_BUCKET, common.STORAGE_BAIDU_PREFIX, common.STORAGE_BAIDU_ENDPOINT, common.LOGFILE)
         print(cmd)
         self.run_command(cmd, detach=True)
 
@@ -64,14 +65,14 @@ class ChartMuseum(common.CommandRunner):
 
     def remove_chartmuseum_logs(self):
         os.chdir(self.rootdir)
-        self.run_command('rm -f %s' % common.LOGFILE)
+        self.run_command(f'rm -f {common.LOGFILE}')
 
     def print_chartmuseum_logs(self):
         os.chdir(self.rootdir)
-        self.run_command('cat %s' % common.LOGFILE)
+        self.run_command(f'cat {common.LOGFILE}')
 
     def upload_test_charts(self):
-        charts_endpoint = '%s/api/charts' % common.HELM_REPO_URL
+        charts_endpoint = f'{common.HELM_REPO_URL}/api/charts'
         testcharts_dir = os.path.join(self.rootdir, common.TESTCHARTS_DIR)
         os.chdir(testcharts_dir)
         for d in os.listdir('.'):
@@ -83,14 +84,14 @@ class ChartMuseum(common.CommandRunner):
                 print(('Uploading test chart package "%s"' % tgz))
                 with open(tgz, 'rb') as f:
                     response = requests.post(url=charts_endpoint, data=f.read())
-                    print(('POST %s' % charts_endpoint))
-                    print(('HTTP STATUS: %s' % response.status_code))
-                    print(('HTTP CONTENT: %s' % response.content))
+                    print(f'POST {charts_endpoint}')
+                    print(f'HTTP STATUS: {response.status_code}')
+                    print(f'HTTP CONTENT: {response.content}')
                     self.http_status_code_should_be(201, response.status_code)
             os.chdir('../')
 
     def upload_bad_test_charts(self):
-        charts_endpoint = '%s/api/charts' % common.HELM_REPO_URL
+        charts_endpoint = f'{common.HELM_REPO_URL}/api/charts'
         testcharts_dir = os.path.join(self.rootdir, common.TESTBADCHARTS_DIR)
         os.chdir(testcharts_dir)
         for d in os.listdir('.'):
@@ -102,14 +103,14 @@ class ChartMuseum(common.CommandRunner):
                 print(('Uploading bad test chart package "%s"' % tgz))
                 with open(tgz, 'rb') as f:
                     response = requests.post(url=charts_endpoint, data=f.read())
-                    print(('POST %s' % charts_endpoint))
-                    print(('HTTP STATUS: %s' % response.status_code))
-                    print(('HTTP CONTENT: %s' % response.content))
+                    print(f'POST {charts_endpoint}')
+                    print(f'HTTP STATUS: {response.status_code}')
+                    print(f'HTTP CONTENT: {response.content}')
                     self.http_status_code_should_be(400, response.status_code)
             os.chdir('../')
 
     def upload_provenance_files(self):
-        prov_endpoint = '%s/api/prov' % common.HELM_REPO_URL
+        prov_endpoint = f'{common.HELM_REPO_URL}/api/prov'
         testcharts_dir = os.path.join(self.rootdir, common.TESTCHARTS_DIR)
         os.chdir(testcharts_dir)
         for d in os.listdir('.'):
@@ -121,14 +122,14 @@ class ChartMuseum(common.CommandRunner):
                 print(('Uploading provenance file "%s"' % prov))
                 with open(prov) as f:
                     response = requests.post(url=prov_endpoint, data=f.read())
-                    print(('POST %s' % prov_endpoint))
-                    print(('HTTP STATUS: %s' % response.status_code))
-                    print(('HTTP CONTENT: %s' % response.content))
+                    print(f'POST {prov_endpoint}')
+                    print(f'HTTP STATUS: {response.status_code}')
+                    print(f'HTTP CONTENT: {response.content}')
                     self.http_status_code_should_be(201, response.status_code)
             os.chdir('../')
 
     def upload_bad_provenance_files(self):
-        prov_endpoint = '%s/api/prov' % common.HELM_REPO_URL
+        prov_endpoint = f'{common.HELM_REPO_URL}/api/prov'
         testcharts_dir = os.path.join(self.rootdir, common.TESTBADCHARTS_DIR)
         os.chdir(testcharts_dir)
         for d in os.listdir('.'):
@@ -140,14 +141,14 @@ class ChartMuseum(common.CommandRunner):
                 print(('Uploading bad provenance file "%s"' % prov))
                 with open(prov) as f:
                     response = requests.post(url=prov_endpoint, data=f.read())
-                    print(('POST %s' % prov_endpoint))
-                    print(('HTTP STATUS: %s' % response.status_code))
-                    print(('HTTP CONTENT: %s' % response.content))
+                    print(f'POST {prov_endpoint}')
+                    print(f'HTTP STATUS: {response.status_code}')
+                    print(f'HTTP CONTENT: {response.content}')
                     self.http_status_code_should_be(400, response.status_code)
             os.chdir('../')
 
     def delete_test_charts(self):
-        endpoint = '%s/api/charts' % common.HELM_REPO_URL
+        endpoint = f'{common.HELM_REPO_URL}/api/charts'
         testcharts_dir = os.path.join(self.rootdir, common.TESTCHARTS_DIR)
         os.chdir(testcharts_dir)
         for d in os.listdir('.'):
@@ -162,15 +163,15 @@ class ChartMuseum(common.CommandRunner):
                 version = tmp[1]
                 print(('Delete test chart "%s-%s"' % (name, version)))
                 with open(tgz) as f:
-                    epoint = '%s/%s/%s' % (endpoint, name, version)
+                    epoint = f'{endpoint}/{name}/{version}'
                     response = requests.delete(url=epoint)
-                    print(('HTTP STATUS: %s' % response.status_code))
-                    print(('HTTP CONTENT: %s' % response.content))
+                    print(f'HTTP STATUS: {response.status_code}')
+                    print(f'HTTP CONTENT: {response.content}')
                     self.http_status_code_should_be(200, response.status_code)
             os.chdir('../')
 
     def ensure_charts_deleted(self):
-        endpoint = '%s/api/charts' % common.HELM_REPO_URL
+        endpoint = f'{common.HELM_REPO_URL}/api/charts'
         testcharts_dir = os.path.join(self.rootdir, common.TESTCHARTS_DIR)
         os.chdir(testcharts_dir)
         for d in os.listdir('.'):
@@ -183,7 +184,7 @@ class ChartMuseum(common.CommandRunner):
                 name = tmp[0]
                 version = tmp[1]
                 with open(tgz):
-                    epoint = '%s/%s/%s' % (endpoint, name, version)
+                    epoint = f'{endpoint}/{name}/{version}'
                     response = requests.get(url=epoint)
                     self.http_status_code_should_be(404, response.status_code)
             os.chdir('../')

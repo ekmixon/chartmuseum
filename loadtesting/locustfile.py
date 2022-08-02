@@ -15,12 +15,12 @@ def post_new_chart(l):
     chart_name = 'chartmuseum-loadtest'
     chart_version = '0.0.%d' % patch_version
     patch_version += 1
-    chart_fn = '%s-%s.tgz' % (chart_name, chart_version)
+    chart_fn = f'{chart_name}-{chart_version}.tgz'
 
     tgz_buf = io.BytesIO()
     t = tarfile.open(mode = "w:gz", fileobj=tgz_buf)
     chart_content = b'name: %s\nversion: %s\n' % (chart_name.encode('utf8'), chart_version.encode('utf8'))
-    tarinfo = tarfile.TarInfo('%s/Chart.yaml' % chart_name)
+    tarinfo = tarfile.TarInfo(f'{chart_name}/Chart.yaml')
     tarinfo.size = len(chart_content)
     t.addfile(tarinfo=tarinfo, fileobj=io.BytesIO(chart_content))
     t.close()

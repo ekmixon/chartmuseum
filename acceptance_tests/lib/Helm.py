@@ -6,13 +6,15 @@ import common
 class Helm(common.CommandRunner):
     def add_chart_repo(self):
         self.remove_chart_repo()
-        self.run_command('helm repo add %s %s' % (common.HELM_REPO_NAME, common.HELM_REPO_URL))
+        self.run_command(
+            f'helm repo add {common.HELM_REPO_NAME} {common.HELM_REPO_URL}'
+        )
 
     def remove_chart_repo(self):
-        self.run_command('helm repo remove %s' % common.HELM_REPO_NAME)
+        self.run_command(f'helm repo remove {common.HELM_REPO_NAME}')
 
     def search_for_chart(self, chart):
-        self.run_command('helm search %s/%s' % (common.HELM_REPO_NAME, chart))
+        self.run_command(f'helm search {common.HELM_REPO_NAME}/{chart}')
 
     def update_chart_repos(self):
         # "| awk 'NR>1{print buf}{buf = $0}'" prevents UnicodeDecodeError
@@ -26,4 +28,6 @@ class Helm(common.CommandRunner):
         if not os.path.exists(common.ACCEPTANCE_DIR):
             os.makedirs(common.ACCEPTANCE_DIR)
         os.chdir(common.ACCEPTANCE_DIR)
-        self.run_command('helm fetch --verify --keyring ../%s %s/%s' % (common.KEYRING, common.HELM_REPO_NAME, chart))
+        self.run_command(
+            f'helm fetch --verify --keyring ../{common.KEYRING} {common.HELM_REPO_NAME}/{chart}'
+        )
